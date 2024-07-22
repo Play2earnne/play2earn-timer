@@ -563,7 +563,11 @@ exports.getMyHistory = async (req, res) => {
     return res.status(400).send("gameid and limit should be numbers");
   }
   try {
-    const query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = ? ORDER BY gamesno DESC LIMIT 100`;
+    // const query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = ? ORDER BY gamesno DESC LIMIT 100`;
+    const query = `SELECT *,tr42_win_slot.tr41_slot_id AS number_result FROM trx_colour_bet LEFT JOIN tr42_win_slot ON trx_colour_bet.gamesno = tr42_win_slot.tr_transaction_id WHERE trx_colour_bet.userid = ? AND trx_colour_bet.gameid = ? 
+      ORDER BY 
+      trx_colour_bet.gamesno DESC 
+      LIMIT 100;`
     await queryDb(query, [Number(num_userid), Number(num_gameid)])
       .then((result) => {
         return res.status(200).json({
