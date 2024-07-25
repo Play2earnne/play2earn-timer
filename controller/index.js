@@ -8,11 +8,12 @@ const {
   oneThreeTrxSendReleasNumber,
   oneFiveTrxSendReleasNumber,
   functionToreturnDummyResult,
+  getRandomResultWingo,
 } = require("../helper/adminHelper");
 const moment = require("moment");
 const soment = require("moment-timezone");
 const { default: axios } = require("axios");
-
+const schedule_old = require("node-schedule");
 const { getAlredyPlacedBet } = require("../helper/adminHelper");
 const { failMsg } = require("../helper/helperResponse");
 
@@ -26,11 +27,48 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
         : currentTime.getSeconds();
     io.emit("onemin", timeToSend); // Emit the formatted time
     if (timeToSend === 3) {
-      // oneMinCheckResult();
-      oneMinColorWining();
+      // oneMinColorWining();
+      clearBetOneMin();
     }
     // }, 1000);
   });
+};
+
+const clearBetOneMin = async () => {
+  try {
+    const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 1 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 1);`;
+    await queryDb(query, [])
+      .then(async (result) => {
+        let create_array_for_random = [];
+        if (result.length === 0) {
+          create_array_for_random = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        } else {
+          result.forEach((element) => {
+            create_array_for_random.push(element.slot_num);
+          });
+        }
+        const slot =
+          create_array_for_random[
+            Math.floor(Math.random() * create_array_for_random.length)
+          ];
+        ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
+        let clear_bet = "CALL wingo_insert_ledger_entry_one_min(?);";
+        await queryDb(clear_bet, [Number(slot)])
+          .then(async (result) => {})
+          .catch((e) => {
+            return res.status(500).json({
+              msg: `Something went wrong api calling`,
+            });
+          });
+      })
+      .catch((e) => {
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
 };
 
 exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
@@ -42,7 +80,8 @@ exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
     io.emit("threemin", `${min}_${timeToSend}`);
     if (min === 0 && timeToSend === 25) {
       // oneMinCheckResult2min();
-      oneMinColorWinning2min();
+      // oneMinColorWinning2min();
+      clearBetThreeMin();
     }
     if (currentTime === 0) {
       min--;
@@ -50,6 +89,42 @@ exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
     }
     //  }, 1000);
   });
+};
+const clearBetThreeMin = async () => {
+  try {
+    const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 2 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 2);`;
+    await queryDb(query, [])
+      .then(async (result) => {
+        let create_array_for_random = [];
+        if (result.length === 0) {
+          create_array_for_random = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        } else {
+          result.forEach((element) => {
+            create_array_for_random.push(element.slot_num);
+          });
+        }
+        const slot =
+          create_array_for_random[
+            Math.floor(Math.random() * create_array_for_random.length)
+          ];
+        ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
+        let clear_bet = "CALL wingo_insert_ledger_entry_three_min(?);";
+        await queryDb(clear_bet, [Number(slot)])
+          .then(async (result) => {})
+          .catch((e) => {
+            return res.status(500).json({
+              msg: `Something went wrong api calling`,
+            });
+          });
+      })
+      .catch((e) => {
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
 };
 
 exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
@@ -65,7 +140,8 @@ exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
       min === 0 // this is for minut
     ) {
       // oneMinCheckResult3sec();
-      oneMinColorWinning3sec();
+      // oneMinColorWinning3sec();
+      clearBetFiveMin();
     }
     ///
     if (currentTime === 0) {
@@ -76,7 +152,44 @@ exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
   });
 };
 
-exports.sendOneMinResultToDatabase = async (time, obj) => {
+const clearBetFiveMin = async () => {
+  try {
+    const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 3 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 3);`;
+    await queryDb(query, [])
+      .then(async (result) => {
+        let create_array_for_random = [];
+        if (result.length === 0) {
+          create_array_for_random = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        } else {
+          result.forEach((element) => {
+            create_array_for_random.push(element.slot_num);
+          });
+        }
+        const slot =
+          create_array_for_random[
+            Math.floor(Math.random() * create_array_for_random.length)
+          ];
+        ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
+        let clear_bet = "CALL wingo_insert_ledger_entry_five_min(?);";
+        await queryDb(clear_bet, [Number(slot)])
+          .then(async (result) => {})
+          .catch((e) => {
+            return res.status(500).json({
+              msg: `Something went wrong api calling`,
+            });
+          });
+      })
+      .catch((e) => {
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+
+const sendOneMinResultToDatabase = async (time, obj) => {
   const newString = obj.hash;
   let num = null;
   for (let i = newString.length - 1; i >= 0; i--) {
@@ -101,11 +214,138 @@ exports.sendOneMinResultToDatabase = async (time, obj) => {
     });
 
   ////////////// result sent to the  api //////////////
-  const parameter = {
-    number: num,
-    gameid: 1,
-  };
-  oneMinTrxSendReleasNumber(parameter);
+  // const parameter = {
+  //   number: num,
+  //   gameid: 1,
+  // };
+  // oneMinTrxSendReleasNumber(parameter);
+
+  const queryToSendResult = `CALL trx_clear_bet(?);`;
+
+  await queryDb(queryToSendResult, [Number(num)])
+    .then((result) => {})
+    .catch((e) => {
+      console.log("Something went wrong in clear one bet trx");
+    });
+};
+
+exports.trxResultSendToBackEnd = () => {
+  schedule_old.scheduleJob("51 * * * * *", function () {
+    const datetoAPISend = parseInt(new Date().getTime().toString());
+    const actualtome = soment.tz("Asia/Kolkata");
+    const time = actualtome;
+    setTimeout(async () => {
+      const res = await axios
+        .get(
+          `https://apilist.tronscanapi.com/api/block`,
+          {
+            params: {
+              sort: "-balance",
+              start: "0",
+              limit: "20",
+              producer: "",
+              number: "",
+              start_timestamp: datetoAPISend,
+              end_timestamp: datetoAPISend,
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(async (result) => {
+          if (result?.data?.data?.[0]) {
+            const obj = result.data.data?.[0];
+            sendOneMinResultToDatabase(time, obj);
+          } else {
+            sendOneMinResultToDatabase(
+              time,
+              functionToreturnDummyResult(
+                Math.floor(Math.random() * (4 - 0 + 1)) + 0
+              )
+            );
+          }
+        })
+        .catch((e) => {
+          console.log("error in tron api");
+          sendOneMinResultToDatabase(
+            time,
+            functionToreturnDummyResult(
+              Math.floor(Math.random() * (4 - 0 + 1)) + 0
+            )
+          );
+        });
+    }, [4000]);
+  });
+};
+
+exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
+  let rule = new schedule_old.RecurrenceRule();
+  rule.second = new schedule_old.Range(0, 59);
+  let oneMinTrxJob = schedule_old.scheduleJob(rule, function () {
+    // setInterval(() => {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+
+    io.emit("onemintrx", timeToSend);
+    if (false) {
+      // timeToSend === 9
+      const datetoAPISend = parseInt(new Date().getTime().toString());
+      const actualtome = soment.tz("Asia/Kolkata");
+      const time = actualtome;
+      // .add(5, "hours").add(30, "minutes").valueOf();
+      setTimeout(async () => {
+        const res = await axios
+          .get(
+            `https://apilist.tronscanapi.com/api/block`,
+            {
+              params: {
+                sort: "-balance",
+                start: "0",
+                limit: "20",
+                producer: "",
+                number: "",
+                start_timestamp: datetoAPISend,
+                end_timestamp: datetoAPISend,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then(async (result) => {
+            if (result?.data?.data?.[0]) {
+              const obj = result.data.data?.[0];
+              allroutes.sendOneMinResultToDatabase(time, obj);
+            } else {
+              allroutes.sendOneMinResultToDatabase(
+                time,
+                functionToreturnDummyResult(
+                  Math.floor(Math.random() * (4 - 0 + 1)) + 0
+                )
+              );
+            }
+          })
+          .catch((e) => {
+            console.log("error in tron api");
+            allroutes.sendOneMinResultToDatabase(
+              time,
+              functionToreturnDummyResult(
+                Math.floor(Math.random() * (4 - 0 + 1)) + 0
+              )
+            );
+          });
+      }, [4000]);
+    }
+    // }, 1000);
+  });
 };
 
 exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
@@ -198,11 +438,19 @@ async function sendThreeMinResultToDatabase(time, obj) {
     });
 
   ////////////// result sent to the  api //////////////
-  const parameter = {
-    number: num,
-    gameid: 2,
-  };
-  oneThreeTrxSendReleasNumber(parameter);
+  // const parameter = {
+  //   number: num,
+  //   gameid: 2,
+  // };
+  // oneThreeTrxSendReleasNumber(parameter);
+
+  const queryToSendResult = `CALL trx_clear_bet_3_min(?);`;
+
+  await queryDb(queryToSendResult, [Number(num)])
+    .then((result) => {})
+    .catch((e) => {
+      console.log("Something went wrong in clear one bet trx");
+    });
 }
 
 exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
@@ -296,11 +544,19 @@ async function sendFiveMinResultToDatabase(time, obj) {
     });
 
   ////////////// result sent to the  api //////////////
-  const parameter = {
-    number: num,
-    gameid: 3,
-  };
-  oneFiveTrxSendReleasNumber(parameter);
+  // const parameter = {
+  //   number: num,
+  //   gameid: 3,
+  // };
+  // oneFiveTrxSendReleasNumber(parameter);
+
+  const queryToSendResult = `CALL trx_clear_bet_5_min(?);`;
+
+  await queryDb(queryToSendResult, [Number(num)])
+    .then((result) => {})
+    .catch((e) => {
+      console.log("Something went wrong in clear one bet trx");
+    });
 }
 
 exports.getPromotionData = async (req, res) => {
@@ -528,21 +784,31 @@ exports.getGameHistory = async (req, res) => {
     return res.status(400).send("gameid and limit should be numbers");
   }
   try {
-    const query =
-      "SELECT * FROM tr42_win_slot WHERE tr41_packtype = ? ORDER BY tr_transaction_id DESC LIMIT 200";
-    await queryDb(query, [Number(num_gameid)])
-      .then((result) => {
-        return res.status(200).json({
-          msg: "Data fetched successfully",
-          result: result,
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-        return res.status(500).json({
-          msg: `Something went wrong api calling`,
-        });
-      });
+    let query = "";
+    if (num_gameid === 1) {
+      query =
+        "SELECT * FROM tr42_win_slot WHERE tr41_packtype = 1 ORDER BY tr_transaction_id DESC LIMIT 200";
+    } else if (num_gameid === 2) {
+      query =
+        "SELECT * FROM tr42_win_slot WHERE tr41_packtype = 2 ORDER BY tr_transaction_id DESC LIMIT 200";
+    } else {
+      query =
+        "SELECT * FROM tr42_win_slot WHERE tr41_packtype = 3 ORDER BY tr_transaction_id DESC LIMIT 200";
+    }
+    query !== "" &&
+      (await queryDb(query, [])
+        .then((result) => {
+          return res.status(200).json({
+            msg: "Data fetched successfully",
+            result: result,
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+          return res.status(500).json({
+            msg: `Something went wrong api calling`,
+          });
+        }));
   } catch (e) {
     return failMsg("Something went worng in node api");
   }
@@ -564,11 +830,19 @@ exports.getMyHistory = async (req, res) => {
   }
   try {
     // const query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = ? ORDER BY gamesno DESC LIMIT 100`;
-    const query = `SELECT *,tr42_win_slot.tr41_slot_id AS number_result FROM trx_colour_bet LEFT JOIN tr42_win_slot ON trx_colour_bet.gamesno = tr42_win_slot.tr_transaction_id WHERE trx_colour_bet.userid = ? AND trx_colour_bet.gameid = ? 
-      ORDER BY 
-      trx_colour_bet.gamesno DESC 
-      LIMIT 100;`
-    await queryDb(query, [Number(num_userid), Number(num_gameid)])
+    let query = "";
+    if (num_gameid === 1) {
+      query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = 1 ORDER BY gamesno DESC LIMIT 100;`;
+      // query = `SELECT *,tr42_win_slot.tr41_slot_id AS number_result FROM trx_colour_bet LEFT JOIN tr42_win_slot ON trx_colour_bet.gamesno = tr42_win_slot.tr_transaction_id WHERE trx_colour_bet.userid = ? AND trx_colour_bet.gameid = 1
+      //       ORDER BY
+      //       trx_colour_bet.gamesno DESC
+      //       LIMIT 100;`;
+    } else if (num_gameid === 2) {
+      query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = 2 ORDER BY gamesno DESC LIMIT 100;`;
+    } else {
+      query = `SELECT * FROM trx_colour_bet WHERE userid = ? AND gameid = 3 ORDER BY gamesno DESC LIMIT 100;`;
+    }
+    await queryDb(query, [Number(num_userid)])
       .then((result) => {
         return res.status(200).json({
           msg: "Data fetched successfully",
@@ -576,6 +850,80 @@ exports.getMyHistory = async (req, res) => {
         });
       })
       .catch((e) => {
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+exports.loginPage = async (req, res) => {
+  const { password, username } = req.body;
+  if (!password || !username)
+    return res.status(200).json({
+      msg: `Everything is required`,
+    });
+
+  try {
+    const query = `SELECT id FROM user WHERE email = ? OR mobile = ?  AND password = ?;`;
+    await queryDb(query, [username, username, password])
+      .then((newresult) => {
+        if (newresult?.length === 0) {
+          return res.status(200).json({
+            error: "400",
+            msg: "Credential not matches.",
+          });
+        }
+        return res.status(200).json({
+          UserID: newresult?.[0]?.id,
+          error: "200",
+          msg: "Login Successfully",
+        });
+      })
+      .catch((error) => {
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+exports.getBalance = async (req, res) => {
+  const { userid } = req.query;
+
+  if (!userid)
+    return res.status(200).json({
+      msg: `Everything is required`,
+    });
+
+  const num_gameid = Number(userid);
+
+  if (typeof num_gameid !== "number")
+    return res.status(200).json({
+      msg: `User id should be in number`,
+    });
+  try {
+    const query = `SELECT cricket_wallet,wallet,winning_wallet FROM user WHERE id = ?;`;
+    await queryDb(query, [Number(num_gameid)])
+      .then((newresult) => {
+        if (newresult?.length === 0) {
+          return res.status(200).json({
+            error: "400",
+            msg: "Something went wrong",
+          });
+        }
+        return res.status(200).json({
+          error: "200",
+          data: {
+            cricket_wallet: newresult?.[0]?.cricket_wallet,
+            wallet: newresult?.[0]?.wallet,
+            winning: newresult?.[0]?.winning_wallet,
+          },
+        });
+      })
+      .catch((error) => {
         return res.status(500).json({
           msg: `Something went wrong api calling`,
         });
@@ -592,7 +940,7 @@ exports.placeBetTrx = async (req, res) => {
     });
   }
 
-  if (!amount || !gameid || !gamesnio || !number || !userid)
+  if (!amount || !gameid || !gamesnio || !String(number) || !userid)
     return res.status(200).json({
       msg: `Everything is required`,
     });
@@ -616,33 +964,211 @@ exports.placeBetTrx = async (req, res) => {
       msg: `Type is not define`,
     });
 
+  const num_gameid = Number(gameid);
+
+  if (typeof num_gameid !== "number")
+    return res.status(200).json({
+      msg: `Game id should be in number`,
+    });
+
   try {
-    const query = `INSERT INTO trx_colour_bet(userid,amount,gameid,number,gamesno,totalamount,commission,status) 
-    VALUES(?,?,?,?,?,?,?,?)`;
-    await queryDb(query, [
-      String(userid),
-      String(amount),
-      Number(gameid),
-      String(number),
-      String(gamesnio),
-      String(Number(Number(amount) * 0.98)?.toFixed(2)),
-      String(Number(Number(amount) * 0.02)?.toFixed(2)),
-      "0",
-    ])
-      .then((newresult) => {
-        return res.status(200).json({
-          error: "200",
-          msg: "Bid Placed Successfully",
+    const query = `CALL trx_bet_placed(?, ?, ?, ?, @result_msg); SELECT @result_msg;`;
+    try {
+      const newresult = await queryDb(query, [
+        String(userid),
+        Number(gameid),
+        String(amount),
+        String(number),
+      ])
+        .then((result) => {
+          res.status(200).json({
+            error: "200",
+            msg: result?.[1]?.[0]?.["@result_msg"],
+          });
+        })
+        .catch((e) => {
+          return res.status(500).json({
+            msg: "Something went wrong with the API call",
+          });
         });
-      })
-      .catch((error) => {
-        return res.status(500).json({
-          msg: `Something went wrong api calling`,
-        });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        msg: "Something went wrong with the API call",
       });
+    }
   } catch (e) {
     return failMsg("Something went worng in node api");
   }
 };
 
-exports.getMy;
+//////////////////////////////////////////////////////////////// Wingo ///////////////////////////////////////////
+exports.gameHistoryWingo = async (req, res) => {
+  const { gameid, limit } = req.query;
+
+  if (!gameid || !limit) {
+    return res.status(400).json({
+      // Changed to 400 for bad request
+      msg: "gameid and limit are required",
+    });
+  }
+
+  const num_gameid = Number(gameid);
+  const num_limit = Number(limit);
+
+  if (typeof num_gameid !== "number" || typeof num_limit !== "number") {
+    return res.status(400).send("gameid and limit should be numbers");
+  }
+  try {
+    let query = "";
+    if (num_gameid === 1) {
+      query =
+        "SELECT * FROM `colour_results` WHERE gameid = 1 ORDER BY id DESC LIMIT 150;";
+    } else if (num_gameid === 2) {
+      query =
+        "SELECT * FROM `colour_results` WHERE gameid = 2 ORDER BY id DESC LIMIT 150;";
+    } else {
+      query =
+        "SELECT * FROM `colour_results` WHERE gameid = 3 ORDER BY id DESC LIMIT 150;";
+    }
+    query !== "" &&
+      (await queryDb(query, [])
+        .then((result) => {
+          return res.status(200).json({
+            msg: "Data fetched successfully",
+            data: result,
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+          return res.status(500).json({
+            msg: `Something went wrong api calling`,
+          });
+        }));
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+
+exports.myHistoryWingo = async (req, res) => {
+  const { userid, gameid, limit } = req.query;
+
+  if (!userid || !gameid) {
+    return res.status(400).json({
+      // Changed to 400 for bad request
+      msg: "gameid and userid are required",
+    });
+  }
+
+  const num_gameid = Number(gameid);
+  const num_limit = Number(limit);
+  const num_userid = Number(userid);
+
+  if (
+    typeof num_gameid !== "number" ||
+    typeof num_limit !== "number" ||
+    typeof num_userid !== "number"
+  ) {
+    return res.status(400).send("gameid and limit should be numbers");
+  }
+  try {
+    let query = "";
+    // if (num_gameid === 1) {
+    //   query =
+    //     "SELECT * , number_result.number AS number_result FROM `colour_bet` LEFT JOIN colour_results ON colour_bet.gamesno = colour_results.gamesno  WHERE colour_bet.gameid = 1 AND colour_bet.userid = ? ORDER BY colour_bet.gamesno DESC LIMIT 150;";
+    // } else if (num_gameid === 2) {
+    //   query =
+    //     "SELECT * , colour_results.number AS number_result FROM `colour_bet` LEFT JOIN colour_results ON colour_bet.gamesno = colour_results.gamesno  WHERE colour_bet.gameid = 2 AND colour_bet.userid = ? ORDER BY colour_bet.gamesno DESC LIMIT 150;";
+    // } else {
+    //   query =
+    //     "SELECT * , colour_results.number AS number_result FROM `colour_bet` LEFT JOIN colour_results ON colour_bet.gamesno = colour_results.gamesno  WHERE colour_bet.gameid = 3 AND colour_bet.userid = ? ORDER BY colour_bet.gamesno DESC LIMIT 150;";
+    // }
+    if (num_gameid === 1) {
+      query = `SELECT * FROM colour_bet WHERE gameid = 1 AND userid = ?  ORDER BY id DESC LIMIT 150;`;
+    } else if (num_gameid === 2) {
+      query = `SELECT * FROM colour_bet WHERE gameid = 2 AND userid = ?  ORDER BY id DESC LIMIT 150;`;
+    } else {
+      query = `SELECT * FROM colour_bet WHERE gameid = 3 AND userid = ?  ORDER BY id DESC LIMIT 150;`;
+    }
+    query !== "" &&
+      (await queryDb(query, [Number(num_userid)])
+        .then((result) => {
+          return res.status(200).json({
+            msg: "Data fetched successfully",
+            data: result,
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+          return res.status(500).json({
+            msg: `Something went wrong api calling`,
+          });
+        }));
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+
+exports.placeBetWingo = async (req, res) => {
+  const { amount, gameid, number, userid } = req.body;
+  if (!amount || !gameid || !String(number) || !userid)
+    return res.status(200).json({
+      msg: `Everything is required`,
+    });
+
+  if (userid && Number(userid) <= 0) {
+    return res.status(200).json({
+      msg: `Please refresh your page`,
+    });
+  }
+
+  if (Number(amount) <= 0)
+    return res.status(200).json({
+      msg: `Amount should be grater or equal to 1.`,
+    });
+  if (gameid && Number(gameid) <= 0)
+    return res.status(200).json({
+      msg: `Type is not define`,
+    });
+  if (gameid && Number(gameid) >= 4)
+    return res.status(200).json({
+      msg: `Type is not define`,
+    });
+
+  const num_gameid = Number(gameid);
+
+  if (typeof num_gameid !== "number")
+    return res.status(200).json({
+      msg: `Game id should be in number`,
+    });
+
+  try {
+    const query = `CALL wingo_bet_placed(?, ?, ?, ?, @result_msg); SELECT @result_msg;`;
+    try {
+      const newresult = await queryDb(query, [
+        String(userid),
+        Number(num_gameid),
+        String(amount),
+        String(number),
+      ])
+        .then((result) => {
+          res.status(200).json({
+            error: "200",
+            msg: result?.[1]?.[0]?.["@result_msg"],
+          });
+        })
+        .catch((e) => {
+          return res.status(500).json({
+            msg: "Something went wrong with the API call",
+          });
+        });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        msg: "Something went wrong with the API call",
+      });
+    }
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};

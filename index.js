@@ -38,6 +38,8 @@ io.on("connection", (socket) => {});
 
 let x = true;
 let trx = true;
+////////////////////////////
+// VALUES('Bob','BPANANG',1277,'987654321','bobb@gmail.com','Fun@123',600.0,1);
 
 if (x) {
   // generateAndSendMessage();
@@ -50,9 +52,8 @@ if (x) {
     secondsUntilNextMinute
   );
   setTimeout(() => {
-    // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
-    generatedTimeEveryAfterEveryOneMinTRX();
-    trxResultSendToBackEnd();
+    allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
+    allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
     allroutes.generatedTimeEveryAfterEveryThreeMin(io);
     allroutes.generatedTimeEveryAfterEveryFiveMin(io);
@@ -67,7 +68,7 @@ if (trx) {
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
 
-  const minutesRemaining = 15 - currentMinute - 1;
+  const minutesRemaining = 30 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -78,123 +79,6 @@ if (trx) {
     allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
     trx = false;
   }, delay);
-}
-const generatedTimeEveryAfterEveryOneMinTRX = () => {
-  let rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  let oneMinTrxJob = schedule.scheduleJob(rule, function () {
-    // setInterval(() => {
-    const currentTime = new Date();
-    const timeToSend =
-      currentTime.getSeconds() > 0
-        ? 60 - currentTime.getSeconds()
-        : currentTime.getSeconds();
-    io.emit("onemintrx", timeToSend);
-    if (false) {
-      // timeToSend === 9
-      const datetoAPISend = parseInt(new Date().getTime().toString());
-      const actualtome = soment.tz("Asia/Kolkata");
-      const time = actualtome;
-      // .add(5, "hours").add(30, "minutes").valueOf();
-      setTimeout(async () => {
-        const res = await axios
-          .get(
-            `https://apilist.tronscanapi.com/api/block`,
-            {
-              params: {
-                sort: "-balance",
-                start: "0",
-                limit: "20",
-                producer: "",
-                number: "",
-                start_timestamp: datetoAPISend,
-                end_timestamp: datetoAPISend,
-              },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then(async (result) => {
-            if (result?.data?.data?.[0]) {
-              const obj = result.data.data?.[0];
-              allroutes.sendOneMinResultToDatabase(time, obj);
-            } else {
-              allroutes.sendOneMinResultToDatabase(
-                time,
-                functionToreturnDummyResult(
-                  Math.floor(Math.random() * (4 - 0 + 1)) + 0
-                )
-              );
-            }
-          })
-          .catch((e) => {
-            console.log("error in tron api");
-            allroutes.sendOneMinResultToDatabase(
-              time,
-              functionToreturnDummyResult(
-                Math.floor(Math.random() * (4 - 0 + 1)) + 0
-              )
-            );
-          });
-      }, [4000]);
-    }
-    // }, 1000);
-  });
-};
-
-function trxResultSendToBackEnd() {
-  schedule.scheduleJob("51 * * * * *", function () {
-    const datetoAPISend = parseInt(new Date().getTime().toString());
-    const actualtome = soment.tz("Asia/Kolkata");
-    const time = actualtome;
-    setTimeout(async () => {
-      const res = await axios
-        .get(
-          `https://apilist.tronscanapi.com/api/block`,
-          {
-            params: {
-              sort: "-balance",
-              start: "0",
-              limit: "20",
-              producer: "",
-              number: "",
-              start_timestamp: datetoAPISend,
-              end_timestamp: datetoAPISend,
-            },
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then(async (result) => {
-          if (result?.data?.data?.[0]) {
-            const obj = result.data.data?.[0];
-            allroutes.sendOneMinResultToDatabase(time, obj);
-          } else {
-            allroutes.sendOneMinResultToDatabase(
-              time,
-              functionToreturnDummyResult(
-                Math.floor(Math.random() * (4 - 0 + 1)) + 0
-              )
-            );
-          }
-        })
-        .catch((e) => {
-          console.log("error in tron api");
-          allroutes.sendOneMinResultToDatabase(
-            time,
-            functionToreturnDummyResult(
-              Math.floor(Math.random() * (4 - 0 + 1)) + 0
-            )
-          );
-        });
-    }, [4000]);
-  });
 }
 
 httpServer.listen(PORT, () => {

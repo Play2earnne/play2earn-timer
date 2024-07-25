@@ -4,6 +4,7 @@ var sql = require("../config/db.config");
 // const path = require("path");
 
 module.exports = {
+
   randomStr: function (len, arr) {
     let ans = "";
     for (let i = len; i > 0; i--) {
