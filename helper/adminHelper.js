@@ -4,7 +4,19 @@ var sql = require("../config/db.config");
 // const path = require("path");
 
 module.exports = {
-
+  getAlredyPlacedBet: function (params) {
+    let query_string =
+      "SELECT number FROM trx_colour_bet WHERE gamesno = ? AND userid = ? AND gameid = ? AND status = 0;";
+    let param = params;
+    return new Promise((resolve, reject) => {
+      sql.query(query_string, param, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+  },
   randomStr: function (len, arr) {
     let ans = "";
     for (let i = len; i > 0; i--) {

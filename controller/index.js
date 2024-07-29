@@ -1,14 +1,7 @@
 const schedule = require("node-cron");
 const {
-  oneMinColorWining,
-  oneMinColorWinning2min,
-  oneMinColorWinning3sec,
   queryDb,
-  oneMinTrxSendReleasNumber,
-  oneThreeTrxSendReleasNumber,
-  oneFiveTrxSendReleasNumber,
   functionToreturnDummyResult,
-  getRandomResultWingo,
 } = require("../helper/adminHelper");
 const moment = require("moment");
 const soment = require("moment-timezone");
@@ -230,7 +223,7 @@ const sendOneMinResultToDatabase = async (time, obj) => {
 };
 
 exports.trxResultSendToBackEnd = () => {
-  schedule_old.scheduleJob("51 * * * * *", function () {
+  schedule_old.scheduleJob("54 * * * * *", function () {
     const datetoAPISend = parseInt(new Date().getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome;
@@ -281,71 +274,46 @@ exports.trxResultSendToBackEnd = () => {
   });
 };
 
-exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
-  let rule = new schedule_old.RecurrenceRule();
-  rule.second = new schedule_old.Range(0, 59);
-  let oneMinTrxJob = schedule_old.scheduleJob(rule, function () {
-    // setInterval(() => {
-    const currentTime = new Date();
-    const timeToSend =
-      currentTime.getSeconds() > 0
-        ? 60 - currentTime.getSeconds()
-        : currentTime.getSeconds();
+// exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
+//   let rule = new schedule_old.RecurrenceRule();
+//   rule.second = new schedule_old.Range(0, 59);
+//   let oneMinTrxJob = schedule_old.scheduleJob(rule, function () {
+//     // setInterval(() => {
+//     const currentTime = new Date();
+//     const timeToSend =
+//       currentTime.getSeconds() > 0
+//         ? 60 - currentTime.getSeconds()
+//         : currentTime.getSeconds();
 
-    io.emit("onemintrx", timeToSend);
-    if (false) {
-      // timeToSend === 9
-      const datetoAPISend = parseInt(new Date().getTime().toString());
-      const actualtome = soment.tz("Asia/Kolkata");
-      const time = actualtome;
-      // .add(5, "hours").add(30, "minutes").valueOf();
-      setTimeout(async () => {
-        const res = await axios
-          .get(
-            `https://apilist.tronscanapi.com/api/block`,
-            {
-              params: {
-                sort: "-balance",
-                start: "0",
-                limit: "20",
-                producer: "",
-                number: "",
-                start_timestamp: datetoAPISend,
-                end_timestamp: datetoAPISend,
-              },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then(async (result) => {
-            if (result?.data?.data?.[0]) {
-              const obj = result.data.data?.[0];
-              allroutes.sendOneMinResultToDatabase(time, obj);
-            } else {
-              allroutes.sendOneMinResultToDatabase(
-                time,
-                functionToreturnDummyResult(
-                  Math.floor(Math.random() * (4 - 0 + 1)) + 0
-                )
-              );
-            }
-          })
-          .catch((e) => {
-            console.log("error in tron api");
-            allroutes.sendOneMinResultToDatabase(
-              time,
-              functionToreturnDummyResult(
-                Math.floor(Math.random() * (4 - 0 + 1)) + 0
-              )
-            );
-          });
-      }, [4000]);
+//     io.emit("onemintrx", timeToSend);
+//     // }, 1000);
+//   });
+// };
+
+exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
+  let clear_interval;
+
+  try {
+    // const job = schedule.schedule("* * * * * *", function () {
+    function handleTimer() {
+      clear_interval = setInterval(() => {
+        const currentTime = new Date();
+        const timeToSend =
+          currentTime.getSeconds() > 0
+            ? 60 - currentTime.getSeconds()
+            : currentTime.getSeconds();
+        io.emit("onemintrx", timeToSend);
+        if (timeToSend === 0) {
+          clearInterval(clear_interval);
+          handleTimer();
+        }
+      }, 1000);
     }
-    // }, 1000);
-  });
+    handleTimer();
+    // });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
@@ -360,8 +328,8 @@ exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome;
       // .add(5, "hours").add(30, "minutes").valueOf();
-
-      setTimeout(async () => {
+      var clear_timeout;
+      clear_timeout = setTimeout(async () => {
         const res = await axios
           .get(
             `https://apilist.tronscanapi.com/api/block`,
@@ -383,6 +351,7 @@ exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
             }
           )
           .then(async (result) => {
+            clearTimeout(clear_timeout);
             if (result?.data?.data[0]) {
               const obj = result.data.data[0];
               sendThreeMinResultToDatabase(time, obj);
@@ -396,6 +365,7 @@ exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
             }
           })
           .catch((e) => {
+            clearTimeout(clear_timeout);
             console.log("error in tron api");
             sendThreeMinResultToDatabase(
               time,
@@ -465,8 +435,8 @@ exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome;
       // .add(5, "hours").add(30, "minutes").valueOf();
-
-      setTimeout(async () => {
+      let clear_time_out;
+      clear_time_out = setTimeout(async () => {
         const res = await axios
           .get(
             `https://apilist.tronscanapi.com/api/block`,
@@ -488,6 +458,7 @@ exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
             }
           )
           .then(async (result) => {
+            clearTimeout(clear_time_out);
             if (result?.data?.data[0]) {
               const obj = result.data.data[0];
               sendFiveMinResultToDatabase(time, obj);
@@ -501,6 +472,7 @@ exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
             }
           })
           .catch((e) => {
+            clearTimeout(clear_time_out);
             console.log("error in tron api");
             sendFiveMinResultToDatabase(
               time,
@@ -905,7 +877,7 @@ exports.getBalance = async (req, res) => {
       msg: `User id should be in number`,
     });
   try {
-    const query = `SELECT cricket_wallet,wallet,winning_wallet FROM user WHERE id = ?;`;
+    const query = `SELECT cricket_wallet,wallet,winning_wallet,today_turnover,username,email,referral_code,full_name FROM user WHERE id = ?;`;
     await queryDb(query, [Number(num_gameid)])
       .then((newresult) => {
         if (newresult?.length === 0) {
@@ -920,6 +892,11 @@ exports.getBalance = async (req, res) => {
             cricket_wallet: newresult?.[0]?.cricket_wallet,
             wallet: newresult?.[0]?.wallet,
             winning: newresult?.[0]?.winning_wallet,
+            total_turnover: newresult?.[0]?.today_turnover,
+            username: newresult?.[0]?.username,
+            email: newresult?.[0]?.email,
+            referral_code: newresult?.[0]?.referral_code,
+            full_name: newresult?.[0]?.full_name,
           },
         });
       })
@@ -971,35 +948,83 @@ exports.placeBetTrx = async (req, res) => {
       msg: `Game id should be in number`,
     });
 
-  try {
-    const query = `CALL trx_bet_placed(?, ?, ?, ?, @result_msg); SELECT @result_msg;`;
-    try {
-      const newresult = await queryDb(query, [
-        String(userid),
-        Number(gameid),
-        String(amount),
-        String(number),
-      ])
-        .then((result) => {
-          res.status(200).json({
-            error: "200",
-            msg: result?.[1]?.[0]?.["@result_msg"],
-          });
-        })
-        .catch((e) => {
+  let get_round = "";
+  if (num_gameid === 1) {
+    get_round = `SELECT tr_tranaction_id FROM tr_game WHERE tr_id = 4;`;
+  } else if (num_gameid === 2) {
+    get_round = `SELECT tr_tranaction_id FROM tr_game WHERE tr_id = 5;`;
+  } else {
+    get_round = `SELECT tr_tranaction_id FROM tr_game WHERE tr_id = 6;`;
+  }
+  const get_round_number =
+    get_round !== "" &&
+    (await queryDb(get_round, [])
+      .then((result) => {
+        return result;
+      })
+      .catch((e) => {
+        console.log("Something went wrong in get round.");
+      }));
+  await getAlredyPlacedBet([
+    String(Number(get_round_number?.[0]?.tr_tranaction_id) + 1),
+    String(userid),
+    num_gameid,
+  ]).then(async (result) => {
+    if (
+      [10, 20, 30]?.includes(Number(number)) &&
+      result?.find((i) => [10, 20, 30]?.includes(Number(i?.number)))
+    ) {
+      return res.status(200).json({
+        msg: `Already Placed on color`,
+      });
+    } else if (
+      [40, 50]?.includes(Number(number)) &&
+      result?.find((i) => [40, 50]?.includes(Number(i?.number)))
+    ) {
+      return res.status(200).json({
+        msg: `Already placed on big/small`,
+      });
+    } else if (
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]?.includes(Number(number)) &&
+      result?.filter((i) =>
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]?.includes(Number(i?.number))
+      )?.length > 2
+    ) {
+      return res.status(200).json({
+        msg: `You have already placed 3  bets.`,
+      });
+    } else {
+      try {
+        const query = `CALL trx_bet_placed(?, ?, ?, ?, @result_msg); SELECT @result_msg;`;
+        try {
+          const newresult = await queryDb(query, [
+            String(userid),
+            Number(gameid),
+            String(amount),
+            String(number),
+          ])
+            .then((result) => {
+              res.status(200).json({
+                error: "200",
+                msg: result?.[1]?.[0]?.["@result_msg"],
+              });
+            })
+            .catch((e) => {
+              return res.status(500).json({
+                msg: "Something went wrong with the API call",
+              });
+            });
+        } catch (error) {
+          console.error("Error:", error);
           return res.status(500).json({
             msg: "Something went wrong with the API call",
           });
-        });
-    } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-        msg: "Something went wrong with the API call",
-      });
+        }
+      } catch (e) {
+        return failMsg("Something went worng in node api");
+      }
     }
-  } catch (e) {
-    return failMsg("Something went worng in node api");
-  }
+  });
 };
 
 //////////////////////////////////////////////////////////////// Wingo ///////////////////////////////////////////
@@ -1170,5 +1195,56 @@ exports.placeBetWingo = async (req, res) => {
     }
   } catch (e) {
     return failMsg("Something went worng in node api");
+  }
+};
+
+exports.winningInformation = async (req, res) => {
+  try {
+    const query = `SELECT email,winning_wallet AS win FROM user ORDER BY CAST(winning_wallet AS UNSIGNED) DESC LIMIT 10;`;
+    await queryDb(query, [])
+      .then((result) => {
+        return res.status(200).json({
+          msg: "Data fetched successfully",
+          data: result,
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        return res.status(500).json({
+          msg: `Something went wrong api calling`,
+        });
+      });
+  } catch (e) {
+    return failMsg("Something went worng in node api");
+  }
+};
+
+exports.getLevels = async (req, res) => {
+  try {
+    const { userid } = req.query;
+    if (!userid)
+      return res.status(201).json({
+        msg: "Please provide uesr id.",
+      });
+    const id_in_number = Number(userid);
+    if (typeof id_in_number !== "number")
+      return res.status(201).json({
+        msg: "Something went wrong.",
+      });
+    const query = `CALL sp_get_levels_data(?,?);`;
+    await queryDb(query, [Number(id_in_number), 23])
+      .then((result) => {
+        res.status(200).json({
+          msg: "Data get successfully",
+          data: result?.[0],
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.status(500).json({
+      msg: "Something went wrong.",
+    });
   }
 };
