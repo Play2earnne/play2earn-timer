@@ -11,20 +11,25 @@ const { getAlredyPlacedBet } = require("../helper/adminHelper");
 const { failMsg } = require("../helper/helperResponse");
 
 exports.generatedTimeEveryAfterEveryOneMin = (io) => {
-  const job = schedule.schedule("* * * * * *", function () {
-    // setInterval(() => {
-    const currentTime = new Date();
-    const timeToSend =
-      currentTime.getSeconds() > 0
-        ? 60 - currentTime.getSeconds()
-        : currentTime.getSeconds();
-    io.emit("onemin", timeToSend); // Emit the formatted time
-    if (timeToSend === 3) {
-      // oneMinColorWining();
-      clearBetOneMin();
-    }
-    // }, 1000);
-  });
+  let one_min_win_time_out;
+  function handleOneMinWingo() {
+    one_min_win_time_out = setInterval(() => {
+      const currentTime = new Date();
+      const timeToSend =
+        currentTime.getSeconds() > 0
+          ? 60 - currentTime.getSeconds()
+          : currentTime.getSeconds();
+      io.emit("onemin", timeToSend); // Emit the formatted time
+      if (timeToSend === 3) {
+        clearBetOneMin();
+      }
+      if (timeToSend === 0) {
+        clearTimeout(one_min_win_time_out);
+        handleOneMinWingo();
+      }
+    }, 1000);
+  }
+  handleOneMinWingo();
 };
 
 const clearBetOneMin = async () => {
@@ -66,22 +71,29 @@ const clearBetOneMin = async () => {
 
 exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
   let min = 2;
-  const job = schedule.schedule("* * * * * *", function () {
-    // setInterval(() => {
-    const currentTime = new Date().getSeconds(); // Get the current time
-    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("threemin", `${min}_${timeToSend}`);
-    if (min === 0 && timeToSend === 25) {
-      // oneMinCheckResult2min();
-      // oneMinColorWinning2min();
-      clearBetThreeMin();
-    }
-    if (currentTime === 0) {
-      min--;
-      if (min < 0) min = 2; // Reset min to 2 when it reaches 0
-    }
-    //  }, 1000);
-  });
+  let one_min_win_time_out;
+  function handleOneMinWingo() {
+    one_min_win_time_out = setInterval(() => {
+      const currentTime = new Date();
+      const timeToSend =
+        currentTime.getSeconds() > 0
+          ? 60 - currentTime.getSeconds()
+          : currentTime.getSeconds();
+      io.emit("threemin", `${min}_${timeToSend}`);
+      if (min === 0 && timeToSend === 25) {
+        clearBetThreeMin();
+      }
+      if (currentTime === 0) {
+        min--;
+        if (min < 0) {
+          min = 2;
+          clearTimeout(one_min_win_time_out);
+          handleOneMinWingo();
+        } // Reset min to 2 when it reaches 0
+      }
+    }, 1000);
+  }
+  handleOneMinWingo();
 };
 const clearBetThreeMin = async () => {
   try {
@@ -122,27 +134,29 @@ const clearBetThreeMin = async () => {
 
 exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
   let min = 4;
-  const job = schedule.schedule("* * * * * *", function () {
-    // setInterval(() => {
-    const currentTime = new Date().getSeconds(); // Get the current time
-    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("fivemin", `${min}_${timeToSend}`);
-
-    if (
-      timeToSend === 40 && // this is for sec
-      min === 0 // this is for minut
-    ) {
-      // oneMinCheckResult3sec();
-      // oneMinColorWinning3sec();
-      clearBetFiveMin();
-    }
-    ///
-    if (currentTime === 0) {
-      min--;
-      if (min < 0) min = 4; // Reset min to 2 when it reaches 0
-    }
-    // }, 1000);
-  });
+  let one_min_win_time_out;
+  function handleOneMinWingo() {
+    one_min_win_time_out = setInterval(() => {
+      const currentTime = new Date();
+      const timeToSend =
+        currentTime.getSeconds() > 0
+          ? 60 - currentTime.getSeconds()
+          : currentTime.getSeconds();
+      io.emit("fivemin", `${min}_${timeToSend}`);
+      if (timeToSend === 40 && min === 0) {
+        clearBetFiveMin();
+      }
+      if (currentTime === 0) {
+        min--;
+        if (min < 0) {
+          min = 4;
+          clearTimeout(one_min_win_time_out);
+          handleOneMinWingo();
+        }
+      }
+    }, 1000);
+  }
+  handleOneMinWingo();
 };
 
 const clearBetFiveMin = async () => {
