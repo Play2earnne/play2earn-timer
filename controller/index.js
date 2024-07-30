@@ -176,6 +176,7 @@ const clearBetThreeMin = async () => {
 //   }
 //   handleOneMinWingo();
 // };
+
 exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
   let min = 4;
   const job = schedule.schedule("* * * * * *", function () {
@@ -931,7 +932,7 @@ exports.getBalance = async (req, res) => {
       msg: `User id should be in number`,
     });
   try {
-    const query = `SELECT cricket_wallet,wallet,winning_wallet,today_turnover,username,email,referral_code,full_name FROM user WHERE id = ?;`;
+    const query = `SELECT cricket_wallet,wallet,winning_wallet,today_turnover,username,email,referral_code,full_name,custid FROM user WHERE id = ?;`;
     await queryDb(query, [Number(num_gameid)])
       .then((newresult) => {
         if (newresult?.length === 0) {
@@ -951,6 +952,7 @@ exports.getBalance = async (req, res) => {
             email: newresult?.[0]?.email,
             referral_code: newresult?.[0]?.referral_code,
             full_name: newresult?.[0]?.full_name,
+            custid:newresult?.[0]?.custid
           },
         });
       })
@@ -1286,7 +1288,7 @@ exports.getLevels = async (req, res) => {
         msg: "Something went wrong.",
       });
     const query = `CALL sp_get_levels_data(?,?);`;
-    await queryDb(query, [Number(id_in_number), 23])
+    await queryDb(query, [Number(id_in_number), 22])
       .then((result) => {
         res.status(200).json({
           msg: "Data get successfully",
