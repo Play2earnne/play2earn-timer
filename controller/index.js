@@ -32,8 +32,36 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
   handleOneMinWingo();
 };
 
+
 const clearBetOneMin = async () => {
   try {
+    ////////////////////// query for get transaction number /////////////////////
+    let get_actual_round = "";
+    const get_games_no = `SELECT win_transactoin FROM wingo_round_number WHERE win_id = 1;`;
+    await queryDb(get_games_no, [])
+      .then(async (result) => {
+        /////////////////////// get the actual result //////////////////
+        get_actual_round = result?.[0]?.win_transactoin;
+      })
+      .catch((e) => {
+        console.log("Something went wrong in clear bet 1 min");
+      });
+
+    //////////////////// query for get actual number /////////////////////////////
+    const admin_se_result_aaya_hai = `SELECT number FROM colour_admin_result WHERE gameid = ? AND gamesno = ? LIMIT 1;`;
+    let get_actual_result = -1;
+    get_actual_round !== "" &&
+      (await queryDb(admin_se_result_aaya_hai, [
+        1,
+        String(Number(get_actual_round) + 1),
+      ])
+        .then(async (result) => {
+          get_actual_result = result?.[0]?.number || -1;
+        })
+        .catch((e) => {
+          console.log("Something went wrong in clear bet 1 min");
+        }));
+
     const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 1 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 1);`;
     await queryDb(query, [])
       .then(async (result) => {
@@ -46,9 +74,11 @@ const clearBetOneMin = async () => {
           });
         }
         const slot =
-          create_array_for_random[
-            Math.floor(Math.random() * create_array_for_random.length)
-          ];
+          get_actual_result >= 0
+            ? get_actual_result
+            : create_array_for_random[
+                Math.floor(Math.random() * create_array_for_random.length)
+              ];
         ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
         let clear_bet = "CALL wingo_insert_ledger_entry_one_min(?);";
         await queryDb(clear_bet, [Number(slot)])
@@ -115,6 +145,29 @@ exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
 };
 const clearBetThreeMin = async () => {
   try {
+    ////////////////////// query for get transaction number /////////////////////
+    const get_games_no = `SELECT win_transactoin FROM wingo_round_number WHERE win_id = 2;`;
+    let get_actual_round = "";
+    await queryDb(get_games_no, [])
+      .then(async (result) => {
+        get_actual_round = result?.[0]?.win_transactoin;
+      })
+      .catch((e) => {
+        console.log("Something went wrong in clear bet 1 min");
+      });
+    //////////////////// query for get actual number /////////////////////////////
+    const admin_se_result_aaya_hai = `SELECT number FROM colour_admin_result WHERE gameid = ? AND gamesno = ? LIMIT 1;`;
+    let get_actual_result = -1;
+    await queryDb(admin_se_result_aaya_hai, [
+      2,
+      String(Number(get_actual_round)+1),
+    ])
+      .then(async (result) => {
+        get_actual_result = result?.[0]?.number || -1;
+      })
+      .catch((e) => {
+        console.log("Something went wrong in clear bet 1 min");
+      });
     const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 2 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 2);`;
     await queryDb(query, [])
       .then(async (result) => {
@@ -127,9 +180,11 @@ const clearBetThreeMin = async () => {
           });
         }
         const slot =
-          create_array_for_random[
-            Math.floor(Math.random() * create_array_for_random.length)
-          ];
+          get_actual_result >= 0
+            ? get_actual_result
+            : create_array_for_random[
+                Math.floor(Math.random() * create_array_for_random.length)
+              ];
         ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
         let clear_bet = "CALL wingo_insert_ledger_entry_three_min(?);";
         await queryDb(clear_bet, [Number(slot)])
@@ -202,6 +257,30 @@ exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
 
 const clearBetFiveMin = async () => {
   try {
+    ////////////////////// query for get transaction number /////////////////////
+    const get_games_no = `SELECT win_transactoin FROM wingo_round_number WHERE win_id = 3;`;
+    let get_actual_round = "";
+    await queryDb(get_games_no, [])
+      .then(async (result) => {
+        get_actual_round = result?.[0]?.win_transactoin;
+      })
+      .catch((e) => {
+        console.log("Something went wrong in clear bet 1 min");
+      });
+    //////////////////// query for get actual number /////////////////////////////
+    const admin_se_result_aaya_hai = `SELECT number FROM colour_admin_result WHERE gameid = ? AND gamesno = ? LIMIT 1;`;
+    let get_actual_result = -1;
+    get_actual_round !== "" &&
+      (await queryDb(admin_se_result_aaya_hai, [
+        3,
+        String(Number(get_actual_round)+1),
+      ])
+        .then(async (result) => {
+          get_actual_result = result?.[0]?.number || -1;
+        })
+        .catch((e) => {
+          console.log("Something went wrong in clear bet 1 min");
+        }));
     const query = `SELECT slot_num, mid_amount FROM wingo_mediator_table WHERE game_type = 3 AND mid_amount = (SELECT MIN(mid_amount) FROM wingo_mediator_table WHERE game_type = 3);`;
     await queryDb(query, [])
       .then(async (result) => {
@@ -214,9 +293,11 @@ const clearBetFiveMin = async () => {
           });
         }
         const slot =
-          create_array_for_random[
-            Math.floor(Math.random() * create_array_for_random.length)
-          ];
+          get_actual_result >= 0
+            ? get_actual_result
+            : create_array_for_random[
+                Math.floor(Math.random() * create_array_for_random.length)
+              ];
         ///////// insert into ledger entry and this sp also clear the all result ///////////////////////
         let clear_bet = "CALL wingo_insert_ledger_entry_five_min(?);";
         await queryDb(clear_bet, [Number(slot)])
@@ -236,6 +317,7 @@ const clearBetFiveMin = async () => {
     return failMsg("Something went worng in node api");
   }
 };
+
 
 const sendOneMinResultToDatabase = async (time, obj) => {
   const newString = obj.hash;
