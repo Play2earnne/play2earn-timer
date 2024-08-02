@@ -350,13 +350,13 @@ const sendOneMinResultToDatabase = async (time, obj) => {
   // };
   // oneMinTrxSendReleasNumber(parameter);
 
-  const queryToSendResult = `CALL trx_clear_bet(?);`;
+  // const queryToSendResult = `CALL trx_clear_bet(?);`;
 
-  await queryDb(queryToSendResult, [Number(num)])
-    .then((result) => {})
-    .catch((e) => {
-      console.log("Something went wrong in clear one bet trx");
-    });
+  // await queryDb(queryToSendResult, [Number(num)])
+  //   .then((result) => {})
+  //   .catch((e) => {
+  //     console.log("Something went wrong in clear one bet trx");
+  //   });
 };
 
 exports.trxResultSendToBackEnd = () => {
@@ -551,13 +551,13 @@ async function sendThreeMinResultToDatabase(time, obj) {
   // };
   // oneThreeTrxSendReleasNumber(parameter);
 
-  const queryToSendResult = `CALL trx_clear_bet_3_min(?);`;
+  // const queryToSendResult = `CALL trx_clear_bet_3_min(?);`;
 
-  await queryDb(queryToSendResult, [Number(num)])
-    .then((result) => {})
-    .catch((e) => {
-      console.log("Something went wrong in clear one bet trx");
-    });
+  // await queryDb(queryToSendResult, [Number(num)])
+  //   .then((result) => {})
+  //   .catch((e) => {
+  //     console.log("Something went wrong in clear one bet trx");
+  //   });
 }
 
 exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
@@ -659,13 +659,13 @@ async function sendFiveMinResultToDatabase(time, obj) {
   // };
   // oneFiveTrxSendReleasNumber(parameter);
 
-  const queryToSendResult = `CALL trx_clear_bet_5_min(?);`;
+  // const queryToSendResult = `CALL trx_clear_bet_5_min(?);`;
 
-  await queryDb(queryToSendResult, [Number(num)])
-    .then((result) => {})
-    .catch((e) => {
-      console.log("Something went wrong in clear one bet trx");
-    });
+  // await queryDb(queryToSendResult, [Number(num)])
+  //   .then((result) => {})
+  //   .catch((e) => {
+  //     console.log("Something went wrong in clear one bet trx");
+  //   });
 }
 
 exports.getPromotionData = async (req, res) => {
