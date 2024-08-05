@@ -13,6 +13,7 @@ const allRoutes = require("./routes/Routes");
 const { functionToreturnDummyResult } = require("./helper/adminHelper");
 const { default: axios } = require("axios");
 const schedule = require("node-schedule");
+const { aviator_Start_function } = require("./controller/AviatorStart");
 //
 const io = new Server(httpServer, {
   cors: {
@@ -52,6 +53,7 @@ if (x) {
     secondsUntilNextMinute
   );
   setTimeout(() => {
+    aviator_Start_function(io);
     allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
@@ -68,7 +70,7 @@ if (trx) {
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
 
-  const minutesRemaining = 60 - currentMinute - 1;
+  const minutesRemaining = 30 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -80,6 +82,8 @@ if (trx) {
     trx = false;
   }, delay);
 }
+
+
 
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
