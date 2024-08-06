@@ -12,6 +12,7 @@ const {
   winningInformation,
   getLevelIncome,
   getLevels,
+  getStatus,
 } = require("../controller");
 const { betPlacedAviator, cashOutFunction, getGameHistoryAviator, getLederData, getWalletByUserId, getMyHistoryByID, getTopRecordsAviator } = require("../controller/AviatorStart");
 const router = express.Router();
@@ -44,5 +45,7 @@ router.get("/get-ledger-data", getLederData);
 router.post("/get-wallet-amount-by-id", getWalletByUserId);
 router.post("/my-history-by-user-id", getMyHistoryByID);
 router.get("/get-top-users", getTopRecordsAviator);
+router.get("/get-status", getStatus);
+
 
 module.exports = router;

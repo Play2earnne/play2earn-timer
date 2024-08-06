@@ -53,7 +53,7 @@ if (x) {
     secondsUntilNextMinute
   );
   setTimeout(() => {
-    aviator_Start_function(io);
+    // aviator_Start_function(io);
     allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);

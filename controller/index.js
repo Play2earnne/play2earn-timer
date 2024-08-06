@@ -32,7 +32,6 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
   handleOneMinWingo();
 };
 
-
 const clearBetOneMin = async () => {
   try {
     ////////////////////// query for get transaction number /////////////////////
@@ -160,7 +159,7 @@ const clearBetThreeMin = async () => {
     let get_actual_result = -1;
     await queryDb(admin_se_result_aaya_hai, [
       2,
-      String(Number(get_actual_round)+1),
+      String(Number(get_actual_round) + 1),
     ])
       .then(async (result) => {
         get_actual_result = result?.[0]?.number || -1;
@@ -273,7 +272,7 @@ const clearBetFiveMin = async () => {
     get_actual_round !== "" &&
       (await queryDb(admin_se_result_aaya_hai, [
         3,
-        String(Number(get_actual_round)+1),
+        String(Number(get_actual_round) + 1),
       ])
         .then(async (result) => {
           get_actual_result = result?.[0]?.number || -1;
@@ -317,7 +316,6 @@ const clearBetFiveMin = async () => {
     return failMsg("Something went worng in node api");
   }
 };
-
 
 const sendOneMinResultToDatabase = async (time, obj) => {
   const newString = obj.hash;
@@ -1034,7 +1032,7 @@ exports.getBalance = async (req, res) => {
             email: newresult?.[0]?.email,
             referral_code: newresult?.[0]?.referral_code,
             full_name: newresult?.[0]?.full_name,
-            custid:newresult?.[0]?.custid
+            custid: newresult?.[0]?.custid,
           },
         });
       })
@@ -1384,5 +1382,19 @@ exports.getLevels = async (req, res) => {
     res.status(500).json({
       msg: "Something went wrong.",
     });
+  }
+};
+
+exports.getStatus = async (req, res) => {
+  try {
+    const query_for_get_status =
+      "SELECT status,title FROM admin_setting WHERE id IN(13,14,15);";
+    const data = await queryDb(query_for_get_status, []);
+    return res.status(200).json({
+      msg: "Data get successfully",
+      data: data,
+    });
+  } catch (e) {
+    console.log(e);
   }
 };
