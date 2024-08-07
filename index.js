@@ -53,7 +53,7 @@ if (x) {
     secondsUntilNextMinute
   );
   setTimeout(() => {
-    // aviator_Start_function(io);
+    aviator_Start_function(io);
     allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
@@ -70,7 +70,7 @@ if (trx) {
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
 
-  const minutesRemaining = 30 - currentMinute - 1;
+  const minutesRemaining = 45 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
