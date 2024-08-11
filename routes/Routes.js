@@ -18,7 +18,7 @@ const { betPlacedAviator, cashOutFunction, getGameHistoryAviator, getLederData, 
 const router = express.Router();
 
 router.get("/promotiondata", getPromotionData);
-///////////////////// trx api //////////////
+///////////////////// trx api /////////////////////////////
 router.get("/trx-auto-genrated-result", getGameHistory);
 router.get("/trx-getColourBets", getMyHistory);
 router.post("/trx-bet", placeBetTrx);
@@ -37,7 +37,7 @@ router.get("/get-level", getLevels);
 
 
 
-// aviator api's 
+// aviator api's  
 router.post("/apply-bet",betPlacedAviator);
 router.post("/cash-out",cashOutFunction);
 router.get("/get-game-history", getGameHistoryAviator);
