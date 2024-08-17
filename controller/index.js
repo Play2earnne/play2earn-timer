@@ -98,33 +98,6 @@ const clearBetOneMin = async () => {
   }
 };
 
-// exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
-//   let min = 2;
-//   let one_min_win_time_out;
-//   function handleOneMinWingo() {
-//     one_min_win_time_out = setInterval(() => {
-//       const currentTime = new Date();
-//       const timeToSend =
-//         currentTime.getSeconds() > 0
-//           ? 60 - currentTime.getSeconds()
-//           : currentTime.getSeconds();
-//       io.emit("threemin", `${min}_${timeToSend}`);
-//       if (min === 0 && timeToSend === 25) {
-//         clearBetThreeMin();
-//       }
-//       if (currentTime === 0) {
-//         min--;
-//         if (min < 0) {
-//           min = 2;
-//           clearTimeout(one_min_win_time_out);
-//           handleOneMinWingo();
-//         } // Reset min to 2 when it reaches 0
-//       }
-//     }, 1000);
-//   }
-//   handleOneMinWingo();
-// };
-
 exports.generatedTimeEveryAfterEveryThreeMin = (io) => {
   let min = 2;
   const job = schedule.schedule("* * * * * *", function () {
@@ -340,21 +313,6 @@ const sendOneMinResultToDatabase = async (time, obj) => {
     .catch((e) => {
       console.log(e);
     });
-
-  ////////////// result sent to the  api //////////////
-  // const parameter = {
-  //   number: num,
-  //   gameid: 1,
-  // };
-  // oneMinTrxSendReleasNumber(parameter);
-
-  // const queryToSendResult = `CALL trx_clear_bet(?);`;
-
-  // await queryDb(queryToSendResult, [Number(num)])
-  //   .then((result) => {})
-  //   .catch((e) => {
-  //     console.log("Something went wrong in clear one bet trx");
-  //   });
 };
 
 exports.trxResultSendToBackEnd = () => {
@@ -409,21 +367,7 @@ exports.trxResultSendToBackEnd = () => {
   });
 };
 
-// exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
-//   let rule = new schedule_old.RecurrenceRule();
-//   rule.second = new schedule_old.Range(0, 59);
-//   let oneMinTrxJob = schedule_old.scheduleJob(rule, function () {
-//     // setInterval(() => {
-//     const currentTime = new Date();
-//     const timeToSend =
-//       currentTime.getSeconds() > 0
-//         ? 60 - currentTime.getSeconds()
-//         : currentTime.getSeconds();
 
-//     io.emit("onemintrx", timeToSend);
-//     // }, 1000);
-//   });
-// };
 
 exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
   let clear_interval;
@@ -542,20 +486,6 @@ async function sendThreeMinResultToDatabase(time, obj) {
       console.log(e);
     });
 
-  ////////////// result sent to the  api //////////////
-  // const parameter = {
-  //   number: num,
-  //   gameid: 2,
-  // };
-  // oneThreeTrxSendReleasNumber(parameter);
-
-  // const queryToSendResult = `CALL trx_clear_bet_3_min(?);`;
-
-  // await queryDb(queryToSendResult, [Number(num)])
-  //   .then((result) => {})
-  //   .catch((e) => {
-  //     console.log("Something went wrong in clear one bet trx");
-  //   });
 }
 
 exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
@@ -650,20 +580,7 @@ async function sendFiveMinResultToDatabase(time, obj) {
       console.log(e);
     });
 
-  ////////////// result sent to the  api //////////////
-  // const parameter = {
-  //   number: num,
-  //   gameid: 3,
-  // };
-  // oneFiveTrxSendReleasNumber(parameter);
-
-  // const queryToSendResult = `CALL trx_clear_bet_5_min(?);`;
-
-  // await queryDb(queryToSendResult, [Number(num)])
-  //   .then((result) => {})
-  //   .catch((e) => {
-  //     console.log("Something went wrong in clear one bet trx");
-  //   });
+ 
 }
 
 exports.getPromotionData = async (req, res) => {

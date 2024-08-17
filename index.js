@@ -10,9 +10,6 @@ const allroutes = require("./controller/index");
 const moment = require("moment");
 const soment = require("moment-timezone");
 const allRoutes = require("./routes/Routes");
-const { functionToreturnDummyResult } = require("./helper/adminHelper");
-const { default: axios } = require("axios");
-const schedule = require("node-schedule");
 const { aviator_Start_function } = require("./controller/AviatorStart");
 //
 const io = new Server(httpServer, {
@@ -54,8 +51,8 @@ if (x) {
   );
   setTimeout(() => {
     aviator_Start_function(io);
-    allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
-    allroutes.trxResultSendToBackEnd();
+    // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
+    // allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
     allroutes.generatedTimeEveryAfterEveryThreeMin(io);
     allroutes.generatedTimeEveryAfterEveryFiveMin(io);
@@ -77,8 +74,8 @@ if (trx) {
   console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
-    allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
-    allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
+    // allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
+    // allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
     trx = false;
   }, delay);
 }
