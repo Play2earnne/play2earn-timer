@@ -51,7 +51,7 @@ if (x) {
   );
   setTimeout(() => {
     aviator_Start_function(io);
-    // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
+    allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     // allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
     allroutes.generatedTimeEveryAfterEveryThreeMin(io);
@@ -67,18 +67,19 @@ if (trx) {
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
 
-  const minutesRemaining = 15 - currentMinute - 1;
+  const minutesRemaining = 45 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
   console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
-    // allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
-    // allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
+    allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
+    allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
     trx = false;
   }, delay);
 }
+ 
 
 
 
