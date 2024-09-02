@@ -1301,18 +1301,22 @@ exports.winningInformation = async (req, res) => {
 
 exports.getLevels = async (req, res) => {
   try {
-    const { userid } = req.query;
-    if (!userid)
+    const { userid, in_date } = req.query;
+    if (!userid || !in_date)
       return res.status(201).json({
-        msg: "Please provide uesr id.",
+        msg: "Please provide uesr id. and date also.",
       });
     const id_in_number = Number(userid);
     if (typeof id_in_number !== "number")
       return res.status(201).json({
         msg: "Something went wrong.",
       });
-    const query = `CALL sp_get_levels_data(?,?);`;
-    await queryDb(query, [Number(id_in_number), 22])
+    const query = `CALL sp_get_levels_data(?,?,?);`;
+    await queryDb(query, [
+      Number(id_in_number),
+      22,
+      moment(in_date || Date.now())?.format("YYYY-MM-DD"),
+    ])
       .then((result) => {
         res.status(200).json({
           msg: "Data get successfully",

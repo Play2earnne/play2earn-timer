@@ -49,10 +49,11 @@ if (x) {
     moment(new Date()).format("HH:mm:ss"),
     secondsUntilNextMinute
   );
+                 // allroutes.trxResultSendToBackEnd();
+
   setTimeout(() => {
-    aviator_Start_function(io);
+    // aviator_Start_function(io);
     allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
-               // allroutes.trxResultSendToBackEnd();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
     allroutes.generatedTimeEveryAfterEveryThreeMin(io);
     allroutes.generatedTimeEveryAfterEveryFiveMin(io);
@@ -67,7 +68,7 @@ if (trx) {
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
 
-  const minutesRemaining = 60 - currentMinute - 1;
+  const minutesRemaining = 30 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
