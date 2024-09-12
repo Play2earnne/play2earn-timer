@@ -17,7 +17,7 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
       currentTime.getSeconds() > 0
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
-    io.emit(" ", timeToSend); // Emit the formatted time
+    io.emit("onemin", timeToSend); // Emit the formatted time
     // if (timeToSend === 6) {
     //   clearBetOneMin();
     // }
