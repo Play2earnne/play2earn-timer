@@ -290,6 +290,70 @@ const clearBetFiveMin = async () => {
   }
 };
 
+exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
+  let oneMinTrxJob = schedule.schedule("* * * * * *", function () {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+    io.emit("onemintrx", timeToSend);
+
+    if (timeToSend === 6) {
+      let timetosend = new Date();
+      timetosend.setSeconds(54);
+      timetosend.setMilliseconds(0);
+      let updatedTimestamp = parseInt(timetosend.getTime().toString());
+      const actualtome = soment.tz("Asia/Kolkata");
+      const time = actualtome.add(5, "hours").add(30, "minutes").valueOf();
+      setTimeout(async () => {
+        const res = await axios
+          .get(
+            `https://apilist.tronscanapi.com/api/block`,
+            {
+              params: {
+                sort: "-balance",
+                start: "0",
+                limit: "20",
+                producer: "",
+                number: "",
+                start_timestamp: updatedTimestamp,
+                end_timestamp: updatedTimestamp,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then(async (result) => {
+            if (result?.data?.data[0]) {
+              const obj = result.data.data[0];
+              sendOneMinResultToDatabase(time, obj);
+            } else {
+              sendOneMinResultToDatabase(
+                time,
+                functionToreturnDummyResult(
+                  Math.floor(Math.random() * (4 - 0 + 1)) + 0
+                )
+              );
+            }
+          })
+          .catch((e) => {
+            console.log("error in tron api");
+            sendOneMinResultToDatabase(
+              time,
+              functionToreturnDummyResult(
+                Math.floor(Math.random() * (4 - 0 + 1)) + 0
+              )
+            );
+          });
+      }, [4000]);
+    }
+  });
+};
+
 const sendOneMinResultToDatabase = async (time, obj) => {
   const newString = obj.hash;
   let num = null;
@@ -314,301 +378,6 @@ const sendOneMinResultToDatabase = async (time, obj) => {
       console.log(e);
     });
 };
-
-exports.trxResultSendToBackEnd = () => {
-  schedule_old.scheduleJob("54 * * * * *", function () {
-    const datetoAPISend = parseInt(new Date().getTime().toString());
-    const actualtome = soment.tz("Asia/Kolkata");
-    const time = actualtome;
-    setTimeout(async () => {
-      const res = await axios
-        .get(
-          `https://apilist.tronscanapi.com/api/block`,
-          {
-            params: {
-              sort: "-balance",
-              start: "0",
-              limit: "20",
-              producer: "",
-              number: "",
-              start_timestamp: datetoAPISend,
-              end_timestamp: datetoAPISend,
-            },
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then(async (result) => {
-          if (result?.data?.data?.[0]) {
-            const obj = result.data.data?.[0];
-            sendOneMinResultToDatabase(time, obj);
-          } else {
-            sendOneMinResultToDatabase(
-              time,
-              functionToreturnDummyResult(
-                Math.floor(Math.random() * (4 - 0 + 1)) + 0
-              )
-            );
-          }
-        })
-        .catch((e) => {
-          console.log("error in tron api");
-          sendOneMinResultToDatabase(
-            time,
-            functionToreturnDummyResult(
-              Math.floor(Math.random() * (4 - 0 + 1)) + 0
-            )
-          );
-        });
-    }, [4000]);
-  });
-};
-
-exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
-  let clear_interval;
-
-  try {
-    // const job = schedule.schedule("* * * * * *", function () {
-    function handleTimer() {
-      clear_interval = setInterval(() => {
-        const currentTime = new Date();
-        const timeToSend =
-          currentTime.getSeconds() > 0
-            ? 60 - currentTime.getSeconds()
-            : currentTime.getSeconds();
-        io.emit("onemintrx", timeToSend);
-        if (timeToSend === 0) {
-          clearInterval(clear_interval);
-          handleTimer();
-        }
-      }, 1000);
-    }
-    handleTimer();
-    // });
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
-  let min = 2;
-  let twoMinTrxJob = schedule.schedule("* * * * * *", function () {
-    // setInterval(() => {
-    const currentTime = new Date().getSeconds(); // Get the current time
-    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("threemintrx", `${min}_${timeToSend}`);
-    if (min === 0 && timeToSend === 6) {
-      const datetoAPISend = parseInt(new Date().getTime().toString());
-      const actualtome = soment.tz("Asia/Kolkata");
-      const time = actualtome;
-      // .add(5, "hours").add(30, "minutes").valueOf();
-      var clear_timeout;
-      clear_timeout = setTimeout(async () => {
-        const query_for_call_sp_three_min_trx_result =
-          "CALL sp_insert_data_if_not_fount_in_trx_table_three_min();";
-        await queryDb(query_for_call_sp_three_min_trx_result, [])
-          .then((result) => {
-            return result;
-          })
-          .catch((e) => {
-            console.log("Error in call 3 min trx sp.");
-          });
-      }, [4000]);
-    }
-    if (currentTime === 0) {
-      min--;
-      if (min < 0) min = 2; // Reset min to 2 when it reaches 0
-    }
-    // }, 1000);
-  });
-};
-// exports.generatedTimeEveryAfterEveryThreeMinTRX = (io) => {
-//   let min = 2;
-//   let twoMinTrxJob = schedule.schedule("* * * * * *", function () {
-//     // setInterval(() => {
-//     const currentTime = new Date().getSeconds(); // Get the current time
-//     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-//     io.emit("threemintrx", `${min}_${timeToSend}`);
-//     if (min === 0 && timeToSend === 6) {
-//       const datetoAPISend = parseInt(new Date().getTime().toString());
-//       const actualtome = soment.tz("Asia/Kolkata");
-//       const time = actualtome;
-//       // .add(5, "hours").add(30, "minutes").valueOf();
-//       var clear_timeout;
-//       clear_timeout = setTimeout(async () => {
-//         const res = await axios
-//           .get(
-//             `https://apilist.tronscanapi.com/api/block`,
-//             {
-//               params: {
-//                 sort: "-balance",
-//                 start: "0",
-//                 limit: "20",
-//                 producer: "",
-//                 number: "",
-//                 start_timestamp: datetoAPISend,
-//                 end_timestamp: datetoAPISend,
-//               },
-//             },
-//             {
-//               headers: {
-//                 "Content-Type": "application/json",
-//               },
-//             }
-//           )
-//           .then(async (result) => {
-//             clearTimeout(clear_timeout);
-//             if (result?.data?.data[0]) {
-//               const obj = result.data.data[0];
-//               sendThreeMinResultToDatabase(time, obj);
-//             } else {
-//               sendThreeMinResultToDatabase(
-//                 time,
-//                 functionToreturnDummyResult(
-//                   Math.floor(Math.random() * (4 - 0 + 1)) + 0
-//                 )
-//               );
-//             }
-//           })
-//           .catch((e) => {
-//             clearTimeout(clear_timeout);
-//             console.log("error in tron api");
-//             sendThreeMinResultToDatabase(
-//               time,
-//               functionToreturnDummyResult(
-//                 Math.floor(Math.random() * (4 - 0 + 1)) + 0
-//               )
-//             );
-//           });
-//       }, [4000]);
-//     }
-//     if (currentTime === 0) {
-//       min--;
-//       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
-//     }
-//     // }, 1000);
-//   });
-// };
-async function sendThreeMinResultToDatabase(time, obj) {
-  const newString = obj.hash;
-  let num = null;
-  for (let i = newString.length - 1; i >= 0; i--) {
-    if (!isNaN(parseInt(newString[i]))) {
-      num = parseInt(newString[i]);
-      break;
-    }
-  }
-  const query = `CALL sp_insert_trx_three_min_result(?, ?, ?, ?, ?, ?, ?)`;
-  await queryDb(query, [
-    num,
-    String(moment(time).format("HH:mm:ss")),
-    2,
-    `**${obj.hash.slice(-4)}`,
-    JSON.stringify(obj),
-    `${obj.hash.slice(-5)}`,
-    obj.number,
-  ])
-    .then((result) => {})
-    .catch((e) => {
-      console.log(e);
-    });
-}
-
-exports.generatedTimeEveryAfterEveryFiveMinTRX = (io) => {
-  let min = 4;
-  let threeMinTrxJob = schedule.schedule("* * * * * *", function () {
-    // setInterval(() => {
-    const currentTime = new Date().getSeconds(); // Get the current time
-    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("fivemintrx", `${min}_${timeToSend}`);
-    if (min === 0 && timeToSend === 6) {
-      const datetoAPISend = parseInt(new Date().getTime().toString());
-      const actualtome = soment.tz("Asia/Kolkata");
-      const time = actualtome;
-      // .add(5, "hours").add(30, "minutes").valueOf();
-      let clear_time_out;
-      clear_time_out = setTimeout(async () => {
-        const res = await axios
-          .get(
-            `https://apilist.tronscanapi.com/api/block`,
-            {
-              params: {
-                sort: "-balance",
-                start: "0",
-                limit: "20",
-                producer: "",
-                number: "",
-                start_timestamp: datetoAPISend,
-                end_timestamp: datetoAPISend,
-              },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then(async (result) => {
-            clearTimeout(clear_time_out);
-            if (result?.data?.data[0]) {
-              const obj = result.data.data[0];
-              sendFiveMinResultToDatabase(time, obj);
-            } else {
-              sendFiveMinResultToDatabase(
-                time,
-                functionToreturnDummyResult(
-                  Math.floor(Math.random() * (4 - 0 + 1)) + 0
-                )
-              );
-            }
-          })
-          .catch((e) => {
-            clearTimeout(clear_time_out);
-            console.log("error in tron api");
-            sendFiveMinResultToDatabase(
-              time,
-              functionToreturnDummyResult(
-                Math.floor(Math.random() * (4 - 0 + 1)) + 0
-              )
-            );
-          });
-      }, [4000]);
-    }
-    if (currentTime === 0) {
-      min--;
-      if (min < 0) min = 4; // Reset min to 4 when it reaches 0
-    }
-    // }, 1000);
-  });
-};
-
-async function sendFiveMinResultToDatabase(time, obj) {
-  const newString = obj.hash;
-  let num = null;
-  for (let i = newString.length - 1; i >= 0; i--) {
-    if (!isNaN(parseInt(newString[i]))) {
-      num = parseInt(newString[i]);
-      break;
-    }
-  }
-  const query = `CALL sp_insert_trx_five_min_result(?, ?, ?, ?, ?, ?, ?)`;
-  await queryDb(query, [
-    num,
-    String(moment(time).format("HH:mm:ss")),
-    3,
-    `**${obj.hash.slice(-4)}`,
-    JSON.stringify(obj),
-    `${obj.hash.slice(-5)}`,
-    obj.number,
-  ])
-    .then((result) => {})
-    .catch((e) => {
-      console.log(e);
-    });
-}
 
 exports.getPromotionData = async (req, res) => {
   try {

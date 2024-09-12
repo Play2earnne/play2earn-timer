@@ -53,10 +53,10 @@ if (x) {
 
   setTimeout(() => {
     // aviator_Start_function(io);
-    allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
-    allroutes.generatedTimeEveryAfterEveryOneMin(io);
-    allroutes.generatedTimeEveryAfterEveryThreeMin(io);
-    allroutes.generatedTimeEveryAfterEveryFiveMin(io);
+    // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
+    // allroutes.generatedTimeEveryAfterEveryOneMin(io);
+    // allroutes.generatedTimeEveryAfterEveryThreeMin(io);
+    // allroutes.generatedTimeEveryAfterEveryFiveMin(io);
     x = false;
   }, secondsUntilNextMinute * 1000);
 }
@@ -75,8 +75,8 @@ if (trx) {
   console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
-    allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
-    allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
+    // allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
+    // allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
     trx = false;
   }, delay);
 }
