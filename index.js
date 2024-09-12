@@ -10,7 +10,6 @@ const allroutes = require("./controller/index");
 const moment = require("moment");
 const soment = require("moment-timezone");
 const allRoutes = require("./routes/Routes");
-const { aviator_Start_function } = require("./controller/AviatorStart");
 //
 const io = new Server(httpServer, {
   cors: {
@@ -49,14 +48,15 @@ if (x) {
     moment(new Date()).format("HH:mm:ss"),
     secondsUntilNextMinute
   );
-                 // allroutes.trxResultSendToBackEnd();
-
-  setTimeout(() => {
-    // aviator_Start_function(io);
+               // allroutes.trxResultSendToBackEnd();
+      // aviator_Start_function(io);
     // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     // allroutes.generatedTimeEveryAfterEveryOneMin(io);
     // allroutes.generatedTimeEveryAfterEveryThreeMin(io);
     // allroutes.generatedTimeEveryAfterEveryFiveMin(io);
+  setTimeout(() => {
+    allroutes.generatedTimeEveryAfterEveryOneMin();
+    allroutes.generatedTimeEveryAfterEveryOneMinTRX();
     x = false;
   }, secondsUntilNextMinute * 1000);
 }

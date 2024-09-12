@@ -11,25 +11,17 @@ const { getAlredyPlacedBet } = require("../helper/adminHelper");
 const { failMsg } = require("../helper/helperResponse");
 
 exports.generatedTimeEveryAfterEveryOneMin = (io) => {
-  let one_min_win_time_out;
-  function handleOneMinWingo() {
-    one_min_win_time_out = setInterval(() => {
-      const currentTime = new Date();
-      const timeToSend =
-        currentTime.getSeconds() > 0
-          ? 60 - currentTime.getSeconds()
-          : currentTime.getSeconds();
-      io.emit("onemin", timeToSend); // Emit the formatted time
-      if (timeToSend === 3) {
-        clearBetOneMin();
-      }
-      if (timeToSend === 0) {
-        clearTimeout(one_min_win_time_out);
-        handleOneMinWingo();
-      }
-    }, 1000);
-  }
-  handleOneMinWingo();
+  const job = schedule.schedule("* * * * * *", function () {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+    io.emit(" ", timeToSend); // Emit the formatted time
+    // if (timeToSend === 6) {
+    //   clearBetOneMin();
+    // }
+  });
 };
 
 const clearBetOneMin = async () => {
@@ -176,33 +168,6 @@ const clearBetThreeMin = async () => {
     return failMsg("Something went worng in node api");
   }
 };
-
-// exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
-//   let min = 4;
-//   let one_min_win_time_out;
-//   function handleOneMinWingo() {
-//     one_min_win_time_out = setInterval(() => {
-//       const currentTime = new Date();
-//       const timeToSend =
-//         currentTime.getSeconds() > 0
-//           ? 60 - currentTime.getSeconds()
-//           : currentTime.getSeconds();
-//       io.emit("fivemin", `${min}_${timeToSend}`);
-//       if (timeToSend === 40 && min === 0) {
-//         clearBetFiveMin();
-//       }
-//       if (currentTime === 0) {
-//         min--;
-//         if (min < 0) {
-//           min = 4;
-//           clearTimeout(one_min_win_time_out);
-//           handleOneMinWingo();
-//         }
-//       }
-//     }, 1000);
-//   }
-//   handleOneMinWingo();
-// };
 
 exports.generatedTimeEveryAfterEveryFiveMin = (io) => {
   let min = 4;
