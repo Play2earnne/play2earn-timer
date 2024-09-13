@@ -10,6 +10,8 @@ const allroutes = require("./controller/index");
 const moment = require("moment");
 const soment = require("moment-timezone");
 const allRoutes = require("./routes/Routes");
+const mailSender = require("./utils/Nodemailer");
+const otpTemplate = require("./templets/emailVerificationTemplate");
 //
 const io = new Server(httpServer, {
   cors: {
@@ -35,8 +37,6 @@ io.on("connection", (socket) => {});
 
 let x = true;
 let trx = true;
-////////////////////////////
-// VALUES('Bob','BPANANG',1277,'987654321','bobb@gmail.com','Fun@123',600.0,1);
 
 if (x) {
   // generateAndSendMessage();
@@ -60,29 +60,8 @@ if (x) {
     x = false;
   }, secondsUntilNextMinute * 1000);
 }
-
-if (trx) {
-  const now = new Date();
-  const nowIST = soment(now).tz("Asia/Kolkata");
-
-  const currentMinute = nowIST.minutes();
-  const currentSecond = nowIST.seconds();
-
-  const minutesRemaining = 15 - currentMinute - 1;
-  const secondsRemaining = 60 - currentSecond;
-
-  const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-  console.log(minutesRemaining, secondsRemaining, delay);
-
-  setTimeout(() => {
-    // allroutes.generatedTimeEveryAfterEveryThreeMinTRX(io);
-    // allroutes.generatedTimeEveryAfterEveryFiveMinTRX(io);
-    trx = false;
-  }, delay);
-}
- 
 ////////////////////////////////
-
+// mailSender("vermaanand278@gmail.com", "THis is simple tile", otpTemplate(9918))
 
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
