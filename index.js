@@ -60,7 +60,6 @@ if (x) {
     x = false;
   }, secondsUntilNextMinute * 1000);
 }
-///////////////////
 // mailSender("vermaanand278@gmail.com", "THis is simple tile", otpTemplate(9918))
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
